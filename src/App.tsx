@@ -1,16 +1,13 @@
 import Box from '@mui/material/Box';
-import { useRef, useState } from 'react';
-// import logo from './logo.svg';
-// import './App.css';
+import { useState } from 'react';
 import { PortSelector } from "./PortSelector";
-import { Container, Grid, TextField, ThemeProvider } from "@mui/material";
+import { Grid, ThemeProvider, Typography } from "@mui/material";
 import { createTheme } from '@mui/material/styles';
-import { logging } from "./log/LogManager";
 import { Progress } from "./dc/progress";
 import { SuuntoVyperDevice } from "./dc/suuntoVyperDevice";
 import { DivesGrid } from "./DivesGrid";
 import { Dive } from "./dc/diveProfile";
-import LinearProgress from '@mui/material/LinearProgress';
+import LinearProgressWithLabel from './LinearProgressWithLabel';
 
 const theme = createTheme({
     palette: {
@@ -23,33 +20,11 @@ const theme = createTheme({
     },
 });
 
-logging
-    .configure({
-        minLevels: {
-            '': 'debug',
-            // 'core': 'warn'
-        }
-    })
-    .registerConsoleLogger();
-
-
 function App() {
-    // setup logging
-    let [log] = useState("");
+    const [error, setError] = useState("");
     const [progress, setProgress] = useState(0);
     const [dives, setDives] = useState<Array<Dive>>(new Array<Dive>());
     let dvs = new Array<Dive>();
-    logging.onLogEntry(logEntry => {
-        log += `${logEntry.time.getHours()}:${logEntry.time.getMinutes()}:${logEntry.time.getSeconds()}.${logEntry.time.getMilliseconds()} ${logEntry.level.toUpperCase()} [${logEntry.module}] ${logEntry.message}\n`;
-        // logArea.current
-        //TODO: check the log set properly
-        // setLog(() => log);
-    });
-
-    const logArea = useRef(null);
-
-    //setup local logger
-    let logger = logging.getLogger("App");
 
     //setup progress indicator
     let updateProgress = function (event: Progress) {
@@ -60,14 +35,17 @@ function App() {
         dvs.push(dive);
         setDives(dvs.map((x) => x));
     }
+
     //setup
     let getDivesCallback = async function (port: SerialPort) {
         let device = new SuuntoVyperDevice(port, updateProgress);
         try {
-            logger.info((await device.open()).toString());
+            console.info(`Device info: ${await device.open()}`);
             await device.getDives(addDive);
         } catch (e) {
-            logger.error((e as Error).toString());
+            //TODO: show error on screen as well
+            console.error(e);
+            setError((e as Error).message);
         } finally {
             await device.close()
         }
@@ -81,19 +59,10 @@ function App() {
                 <Grid item xs={6}>
                     <Box sx={{ height: 100 }} />
                     <PortSelector getDivesCallback={getDivesCallback} />
-                    ///https://mui.com/components/progress/
-                    <LinearProgress variant="determinate" value={progress} sx={{ padding: 1, marginBottom: 2, marginTop: 2 }} />
+                    <LinearProgressWithLabel value={progress} />
+                    <Typography variant='body2' color="error" marginBottom={2}>{error}</Typography>
                     <DivesGrid dives={dives} />
-                    <TextField
-                        id="log-area"
-                        ref={logArea}
-                        label="Log"
-                        multiline
-                        sx={{ minHeight: 300, width: 1, marginTop: 2 }}
-                        maxRows={10}
-                        value={log}
-                    />
-                    <Grid item xs={3}></Grid>
+                    <Grid item xs={3} />
                 </Grid>
             </Grid>
         </ThemeProvider >

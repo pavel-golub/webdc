@@ -3,29 +3,25 @@ import { checksum_xor_uint8, sleep } from "./utils";
 import { SuuntoVyperConsts } from "./suuntoVyperConsts";
 import { Dive } from "./diveProfile";
 import { SuuntoVyperParser } from "./suuntoVyperParser";
-import { Logger } from "../log/Logger";
-import { logging } from "../log/LogManager";
 
 export class SuuntoVyperDevice extends Device {
     private rtsSleepMs = 200;
-    private logger: Logger;
 
     constructor(port: SerialPort | null, progressCallback: ProgressCallback | null) {
         super(port == null ? new SerialPort() : port, progressCallback);
-        this.logger = logging.getLogger('SuuntoVyperDevice');
     }
 
     async open(): Promise<DeviceInfo> {
         await this._port.open({ baudRate: 2400, dataBits: 8, parity: "odd", stopBits: 1, flowControl: "none" });
         await sleep(1000);
-        this.logger.debug("Set DTR");
+        console.debug("Set DTR");
         await this._port.setSignals({ dataTerminalReady: true });
         await sleep(600);
         return await this.getDeviceInfo();
     }
 
     async close() {
-        this.logger.debug("Close serial port");
+        console.debug("Close serial port");
         await this._port.close();
     }
 
@@ -46,7 +42,7 @@ export class SuuntoVyperDevice extends Device {
         command[2] = checksum_xor_uint8(command, 0, 2, 0x00);
         await this.sendCommand(command, this.rtsSleepMs);
         let data = await this.readData(this.isLastPacket);
-        if (data.length === 0) {
+        if (data.length === 0 || data[1] === 0) {
             return null;
         }
         this.progress.updateDeltaProgress(data.length);

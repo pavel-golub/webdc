@@ -7,8 +7,6 @@ import {
     MenuItem,
     Select,
     SelectChangeEvent} from "@mui/material";
-import {logging} from "./log/LogManager";
-import {Logger} from "./log/Logger";
 
 type PortSelectorProps = {
     // port: SerialPort | undefined;
@@ -23,13 +21,11 @@ export class PortSelector extends React.Component<PortSelectorProps> {
         ports: new Array<SerialPort>(),
         log: ""
     }
-    private logger: Logger;
 
     constructor(props: PortSelectorProps) {
         super(props);
         // this.getDivesOrSelectPort = this.getDivesOrSelectPort.bind(this);
         this.handleChange = this.handleChange.bind(this);
-        this.logger = logging.getLogger("PortSelector");
     }
 
     async componentDidMount() {
@@ -62,7 +58,7 @@ export class PortSelector extends React.Component<PortSelectorProps> {
             try {
                 port = await navigator.serial.requestPort();
             } catch (e) {
-                console.log(e);
+                console.info(e);
             }
             if (port) {
                 await this.props.getDivesCallback(port);

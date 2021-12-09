@@ -1,8 +1,6 @@
 import {checksum_xor_uint8, concatenateArrays, Units} from './utils'
 import {Dive, DiveMode, GasMix, Sample, Tank} from './diveProfile'
 import {SuuntoVyperConsts} from "./suuntoVyperConsts";
-import {logging} from "../log/LogManager";
-import {Logger} from "../log/Logger";
 
 const Duration = require("duration-js");
 
@@ -10,12 +8,10 @@ export class SuuntoVyperParser {
     private source;
     private marker: number = 0;
     private isMostRecentDive: boolean;
-    private logger: Logger;
 
     constructor(source: Uint8Array, isMostRecentDive: boolean) {
         this.source = source;
         this.isMostRecentDive = isMostRecentDive;
-        this.logger = logging.getLogger('SuuntoVyperParser');
     }
 
     validate() {
@@ -132,7 +128,7 @@ export class SuuntoVyperParser {
                         }
                         break;
                     default: // Unknown
-                        this.logger.warn("Unknown event");
+                        console.warn("Unknown event");
                         break;
                 }
             }
@@ -148,7 +144,7 @@ export class SuuntoVyperParser {
         // Check the end marker.
         this.marker = offset;
         if (this.marker + 4 >= size || data[this.marker] !== 0x80) {
-            throw Error("No valid end marker found!");
+            throw Error("No valid end marker found");
         }
         result.diveTime = new Duration(nsamples * interval + "s");
         result.maxDepth = maxDepth * Units.FEET;
