@@ -6,9 +6,7 @@ import {
     InputLabel,
     MenuItem,
     Select,
-    SelectChangeEvent,
-    Stack
-} from "@mui/material";
+    SelectChangeEvent} from "@mui/material";
 import {logging} from "./log/LogManager";
 import {Logger} from "./log/Logger";
 
@@ -100,7 +98,7 @@ export class PortSelector extends React.Component<PortSelectorProps> {
                         {this.state.devices.map(function (d, idx) {
                             //TO-DO display real device name e.g. by using WebUsb interface and mapping by vendor and product id
                             // @ts-ignore
-                            return (<MenuItem value={idx + ""}>{d.usbVendorId}: {d.usbProductId}</MenuItem>)
+                            return (<MenuItem key={idx} value={idx}>{d.usbVendorId}: {d.usbProductId}</MenuItem>)
                         })}
                     </Select>
                 </FormControl>

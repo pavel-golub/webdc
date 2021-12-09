@@ -22,3 +22,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 package-lock.json
+samples/private
+tools/PL2303_Prolific_GPS_1013_20090319.exe
+tools/simulator-win32.exe

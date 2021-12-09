@@ -27,10 +27,15 @@ export function sleep(ms: number) {
 
 export function getByteArrayAsString(bytes: Uint8Array | undefined) {
     if (!bytes) {
-        return "";
+        return "[]";
     }
-    // @ts-ignore
-    return `[${Array.apply([], bytes)/*.map(x => x.toString(16))*/.join(",")}]`;
+    let data1 = new Array<number>();
+
+    for (let x = 0; x < bytes.byteLength; x++) {
+        data1.push(bytes[x]);
+    }
+    //@ts-ignore
+    return `[${data1.map(x => "0x" + (x <= 0xF ? "0" : "") + x.toString(16).toUpperCase()).join(", ")}]`;
 }
 
 export class Units {

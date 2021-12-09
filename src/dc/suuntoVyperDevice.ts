@@ -1,25 +1,25 @@
-import {Device, DeviceInfo, ProgressCallback} from "./device";
-import {checksum_xor_uint8, sleep} from "./utils";
-import {SuuntoVyperConsts} from "./suuntoVyperConsts";
-import {Dive} from "./diveProfile";
-import {SuuntoVyperParser} from "./suuntoVyperParser";
-import {Logger} from "../log/Logger";
-import {logging} from "../log/LogManager";
+import { Device, DeviceInfo, DiveCallback, ProgressCallback } from "./device";
+import { checksum_xor_uint8, sleep } from "./utils";
+import { SuuntoVyperConsts } from "./suuntoVyperConsts";
+import { Dive } from "./diveProfile";
+import { SuuntoVyperParser } from "./suuntoVyperParser";
+import { Logger } from "../log/Logger";
+import { logging } from "../log/LogManager";
 
 export class SuuntoVyperDevice extends Device {
     private rtsSleepMs = 200;
     private logger: Logger;
 
-    constructor(port: SerialPort, progressCallback: ProgressCallback | null) {
-        super(port, progressCallback);
+    constructor(port: SerialPort | null, progressCallback: ProgressCallback | null) {
+        super(port == null ? new SerialPort() : port, progressCallback);
         this.logger = logging.getLogger('SuuntoVyperDevice');
     }
 
     async open(): Promise<DeviceInfo> {
-        await this._port.open({baudRate: 2400, dataBits: 8, parity: "odd", stopBits: 1, flowControl: "none"});
+        await this._port.open({ baudRate: 2400, dataBits: 8, parity: "odd", stopBits: 1, flowControl: "none" });
         await sleep(1000);
         this.logger.debug("Set DTR");
-        await this._port.setSignals({dataTerminalReady: true});
+        await this._port.setSignals({ dataTerminalReady: true });
         await sleep(600);
         return await this.getDeviceInfo();
     }
@@ -29,36 +29,51 @@ export class SuuntoVyperDevice extends Device {
         await this._port.close();
     }
 
-    async getDives(): Promise<Array<Dive>> {
-        let result = new Array<Dive>();
+    async getDives(diveCallback: DiveCallback) {
         let isFirst = true;
         while (true) {
             let dive = await this.getDive(isFirst);
             isFirst = false;
-            if (dive == null) {
+            if (dive === null) {
                 break;
             }
-            result.push(dive);
+            diveCallback(dive);
         }
-        return result;
     }
 
-    async getDive(isFirst: boolean): Promise<Dive | null> {
+    private async getDive(isFirst: boolean): Promise<Dive | null> {
         let command = new Uint8Array([isFirst ? 0x08 : 0x09, 0xA5, 0x00]);
         command[2] = checksum_xor_uint8(command, 0, 2, 0x00);
         await this.sendCommand(command, this.rtsSleepMs);
-        let data = await this.readData();
+        let data = await this.readData(this.isLastPacket);
         if (data.length === 0) {
             return null;
         }
         this.progress.updateDeltaProgress(data.length);
-        let parser = new SuuntoVyperParser(data, true);
+        let parser = new SuuntoVyperParser(data, isFirst);
         return parser.getDive();
+    }
+
+    private isLastPacket(data: Uint8Array): boolean {
+        let offset = 0;
+        while (offset < data.byteLength) {
+            let len = data[offset + 1];
+            if (len === 0) {
+                return true;
+            }
+            // not sure this logic is correct but presumably if device returned less data than standard packet size then it means that it is the last packet
+            // if for some reason there are issues becuase of this if then feel free to remove it because it is just optimization
+            if (len < SuuntoVyperConsts.SZ_PACKET && offset + len + 3 === data.byteLength) {
+                return true;
+            }
+            offset += len + 3;
+        }
+        return false;
     }
 
     private async getDeviceInfo() {
         await this.sendCommand(new Uint8Array([0x05, 0x00, 0x16, 0x14, 0x07]), this.rtsSleepMs);
-        var header = await this.readData();
+        var header = await this.readData((data: Uint8Array) => (data.byteLength >= (SuuntoVyperConsts.HDR_DEVINFO_END - SuuntoVyperConsts.HDR_DEVINFO_BEGIN)));
         if (header.length === 0) {
             throw Error("Cannot read device info");
         }
