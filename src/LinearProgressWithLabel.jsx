@@ -5,9 +5,9 @@ import Box from '@mui/material/Box';
 
 export default function LinearProgressWithLabel(props) {
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+    <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: 1, marginTop: 2 }}>
       <Box sx={{ width: '100%', mr: 1 }}>
-        <LinearProgress variant="determinate" {...props} sx={{ padding: 1, marginBottom: 1, marginTop: 2 }} />
+        <LinearProgress variant="determinate" {...props} sx={{ padding: 1, }} />
       </Box>
       <Box sx={{ minWidth: 35 }}>
         <Typography variant="body2" color="text.secondary">{`${Math.round(
