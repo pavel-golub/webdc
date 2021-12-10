@@ -10,7 +10,7 @@ export const DivesGrid = function ({ dives }: DivesGridProps) {
     const tempFormatter = new Intl.NumberFormat('en-US', { style: 'unit', unit: 'celsius', unitDisplay: 'short', maximumFractionDigits: 1 });
 
     const columns: GridColDef[] = [
-        { field: 'date', headerName: 'Date', type: 'dateTime', width: 180 },
+        { field: 'date', headerName: 'Date', type: 'dateTime', width: 180, valueFormatter: ({ value }) => (value as Date).toUTCString() },
         { field: 'diveTime', headerName: 'Duration' },
         { field: 'airTemperature', type: "number", width: 120, headerName: 'Surface Temp', valueFormatter: ({ value }) => tempFormatter.format(Number(value)) },
         { field: 'maxDepth', headerName: 'Max Depth', type: "number", valueFormatter: ({ value }) => meterFormatter.format(Number(value)) },
@@ -20,6 +20,6 @@ export const DivesGrid = function ({ dives }: DivesGridProps) {
     }
     // @ts-ignore
     return (
-        <DataGrid rows={dives} columns={columns} getRowId={getRowId} />
+        <DataGrid rows={dives} columns={columns} getRowId={getRowId}/>
     );
 }

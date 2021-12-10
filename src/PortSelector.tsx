@@ -1,4 +1,4 @@
-import React, {ReactNode} from "react";
+import React, { ReactNode } from "react";
 import Button from '@mui/material/Button';
 import {
     Box,
@@ -6,7 +6,8 @@ import {
     InputLabel,
     MenuItem,
     Select,
-    SelectChangeEvent} from "@mui/material";
+    SelectChangeEvent
+} from "@mui/material";
 
 type PortSelectorProps = {
     // port: SerialPort | undefined;
@@ -36,12 +37,12 @@ export class PortSelector extends React.Component<PortSelectorProps> {
                 devices[i] = ports[i].getInfo();
             }
             if (ports.length === 0) {
-                this.setState({opsItem: "AddDevice", selected: "AddDevice"});
+                this.setState({ opsItem: "AddDevice", selected: "AddDevice" });
             } else {
-                this.setState({opsItem: "AddDevice", devices: devices, ports: ports, selected: "0"});
+                this.setState({ opsItem: "AddDevice", devices: devices, ports: ports, selected: "0" });
             }
         } else {
-            this.setState({opsItem: "NotSupported"});
+            this.setState({ opsItem: "NotSupported" });
         }
     }
 
@@ -69,25 +70,31 @@ export class PortSelector extends React.Component<PortSelectorProps> {
     }
 
     private handleChange(e: SelectChangeEvent<string>, value: ReactNode) {
-        this.setState({selected: e.target.value});
+        this.setState({ selected: e.target.value });
     }
 
     render() {
         return (
-            <Box sx={{display: 'flex', flexDirection: 'row', alignItems: "center", justifyContent: "center"}}>
-                <FormControl variant="standard" sx={{m: 1, minWidth: 150}}>
+            <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: "center", justifyContent: "center" }}>
+                <FormControl variant="standard" sx={{ m: 1, minWidth: 150 }}>
                     <InputLabel id="demo-simple-select-label2">Model</InputLabel>
                     <Select label="Model" labelId="demo-simple-select-label2" value="Suunto:Vyper"
-                            name="model" id="model-select">
+                        name="model" id="model-select">
                         <MenuItem value="Suunto:Vyper">Suunto Vyper</MenuItem>
+                        <MenuItem value="Suunto:Stinger">Suunto Stinger</MenuItem>
+                        <MenuItem value="Suunto:Mosquito">Suunto Mosquito</MenuItem>
+                        <MenuItem value="Suunto:Vytec">Suunto Vytec</MenuItem>
+                        <MenuItem value="Suunto:Cobra">Suunto Cobra</MenuItem>
+                        <MenuItem value="Suunto:Gekko">Suunto Gekko</MenuItem>
+                        <MenuItem value="Suunto:Zoop">Suunto Zoop</MenuItem>
                     </Select>
                 </FormControl>
-                <FormControl variant="standard" sx={{m: 1, minWidth: 150}}>
+                <FormControl variant="standard" sx={{ m: 1, minWidth: 150 }}>
                     <InputLabel id="demo-simple-select-label">Device</InputLabel>
 
                     <Select label="Device" labelId="demo-simple-select-label" onChange={this.handleChange}
-                            value={this.state.selected}
-                            name="ports" id="port-select">
+                        value={this.state.selected}
+                        name="ports" id="port-select">
                         <MenuItem
                             value={this.state.opsItem}><em>{this.state.opsItem === "NotSupported" ? "Browser doesn't support serial interface" : "Add device"}</em></MenuItem>
 
@@ -98,7 +105,7 @@ export class PortSelector extends React.Component<PortSelectorProps> {
                         })}
                     </Select>
                 </FormControl>
-                <FormControl sx={{alignContent: 'bottom'}}>
+                <FormControl sx={{ alignContent: 'bottom' }}>
                     <Button variant="contained" onClick={async () => this.getDivesOrSelectPort(this)}>Get
                         Dives</Button>
                 </FormControl>

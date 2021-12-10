@@ -1,6 +1,6 @@
-import {checksum_xor_uint8, concatenateArrays, Units} from './utils'
-import {Dive, DiveMode, GasMix, Sample, Tank} from './diveProfile'
-import {SuuntoVyperConsts} from "./suuntoVyperConsts";
+import { checksum_xor_uint8, concatenateArrays, Units } from './utils'
+import { Dive, DiveMode, GasMix, Sample, Tank } from './diveProfile'
+import { SuuntoVyperConsts } from "./suuntoVyperConsts";
 
 const Duration = require("duration-js");
 
@@ -53,22 +53,20 @@ export class SuuntoVyperParser {
         let nsamples = 0;
         let depth = 0, maxDepth = 0;
         let offset = 14;
-        let time = 0;
+        let time = interval;
         let size = data.length;
         let complete = true;
         let sample = new Sample();
-        result.samples.push(new Sample());
+        sample.timeSeconds = time;
+        result.samples.push(sample);
         while (offset < size && data[offset] !== 0x80) {
-            sample = new Sample();
             let value = data[offset++];
-//TODO: validate this logic is valid, it increases time for markers
             if (complete) {
-                // Time (seconds).
+                sample = new Sample();
                 time += interval;
                 sample.timeSeconds = time;
                 complete = false;
             }
-
             if (value < 0x79 || value > 0x87) {
                 // Delta depth.
                 let signedChar = value <= 127 ? value : (value - 256)
@@ -132,14 +130,21 @@ export class SuuntoVyperParser {
                         break;
                 }
             }
-            result.samples.push(sample);
+            if (complete) {
+                result.samples.push(sample);
+            }
         }
 
         if (complete) {
+            // if last sample was completed and added into samples, then create final sample for 0 depth
+            // if last sample was just flagged but no final depth has been presented, then don't touch timeSeconds
+            sample = new Sample();
             time += interval;
             sample.timeSeconds = time;
         }
+        //last depth is always 0
         sample.depth = 0;
+        result.samples.push(sample);
 
         // Check the end marker.
         this.marker = offset;

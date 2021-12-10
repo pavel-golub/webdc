@@ -25,3 +25,8 @@ package-lock.json
 samples/private
 tools/PL2303_Prolific_GPS_1013_20090319.exe
 tools/simulator-win32.exe
+.idea/.gitignore
+.idea/modules.xml
+.idea/vcs.xml
+.idea/webdc.iml
+.idea/inspectionProfiles/Project_Default.xml

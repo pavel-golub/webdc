@@ -42,10 +42,12 @@ export class SuuntoVyperDevice extends Device {
         command[2] = checksum_xor_uint8(command, 0, 2, 0x00);
         await this.sendCommand(command, this.rtsSleepMs);
         let data = await this.readData(this.isLastPacket);
-        if (data.length === 0 || data[1] === 0) {
+        let len = data[1];
+        if (data.length === 0 || len === 0) {
             return null;
         }
-        this.progress.updateDeltaProgress(data.length);
+        // -1 for CRC byte
+        this.progress.updateDeltaProgress(data.length - 1);
         let parser = new SuuntoVyperParser(data, isFirst);
         return parser.getDive();
     }
