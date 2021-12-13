@@ -25,7 +25,7 @@ This work is primarely based on another great opensource project [libdivecompute
 The app is React based web app.
 
 - Install nodejs with npm (download [here](https://nodejs.org/en/download/)).
-- Execute `npm start` in the project directory
+- Execute `npm install` and `npm start` in the project directory
 - Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 - Connect your dive computer to PC and select *Add Device*
 - Enjoy!
