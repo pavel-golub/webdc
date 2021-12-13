@@ -45,7 +45,7 @@ export class Device {
         await this._port.setSignals({ requestToSend: false });
     }
 
-    private readonly readTimeoutMs = 1000;
+    private readonly readTimeoutMs = 5000;
 
     protected async readData(shouldCompleteRead: shouldCompleteRead | undefined): Promise<Uint8Array> {
         if (!shouldCompleteRead) {

@@ -55,15 +55,15 @@ function App() {
     return (
         <ThemeProvider theme={theme}>
             <Grid container>
-                <Grid item xs={3} />
-                <Grid item xs={6} height={500}>
+                <Grid item xs={1} md={2} lg={3}/>
+                <Grid item xs={10} md={8} lg={6} height={500}>
                     <Box sx={{ height: 100 }} />
                     <PortSelector getDivesCallback={getDivesCallback} />
                     <LinearProgressWithLabel value={progress} />
                     <Typography variant='body2' color="error" marginBottom={2}>{error}</Typography>
                     <DivesGrid dives={dives} />
                 </Grid>
-                <Grid item xs={3} />
+                <Grid item xs={1} md={2} lg={3}/>
             </Grid>
         </ThemeProvider >
     );

@@ -1,3 +1,38 @@
+# Project
+
+**webdc** is *experimental* web application and library for downloading dive logs from dive computers from a browser without installing any additional software.
+
+The library is based on [Web Serial API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Serial_API) supported by many browsers. The library could be extended with [Web USB](https://developer.mozilla.org/en-US/docs/Web/API/USB) and [Web Bluetooth](https://developer.mozilla.org/en-US/docs/Web/API/Web_Bluetooth_API) in future.
+
+This work is primarely based on another great opensource project [libdivecomputer](https://www.libdivecomputer.org/) and can be considered as a port of libdivecomputer to JavaScript/TypeScript.
+
+**webdc** is being created as an integral part of https://diveboard.com and corresponding [open source repo](https://github.com/Diveboard/diveboard-web/).
+
+
+![Screenshot](/doc/images/Screenshot_1.png "Screenshot")
+
+
+## Currently supported devices
+- Suunto Vyper
+- Suunto Stinger
+- Suunto Mosquito
+- Suunto Vytec
+- Suunto Cobra
+- Suunto Gekko
+
+# Quick start
+
+The app is React based web app.
+
+- Install nodejs with npm (download [here](https://nodejs.org/en/download/)).
+- Execute `npm start` in the project directory
+- Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- Connect your dive computer to PC and select *Add Device*
+- Enjoy!
+
+## Tests
+The porject includes set of unit tests. You can run them with `npm test`
+
 # Device emulation
 If you want to emulate real device then following guidlines might be helpful:
 
@@ -9,50 +44,3 @@ If you want to emulate real device then following guidlines might be helpful:
 
 4. My own Viper dump you can find in /samples folder.
 You can run it by `.\simulator-win32.exe -b vyper -p com1 ..\samples\Downloader\DC_FAMILY_SUUNTO_VYPER.bin`
-
-# Getting Started with Create React App
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
